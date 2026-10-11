@@ -1,0 +1,500 @@
+﻿<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="#f8f6fc">
+    <title>AYUSH+ — your health, in one place</title>
+    <link rel="icon" type="image/png" href="assets/ayush-lavender-logo.png">
+    <link rel="stylesheet" href="styles/app.css">
+</head>
+
+<body>
+    <section id="authGate" class="auth-gate" aria-labelledby="authGateTitle">
+        <div class="auth-gate-card">
+            <div class="brand auth-brand">
+                <img class="logo" src="assets/ayush-lavender-logo.png" alt="AYUSH+">
+            </div>
+            <div class="eyebrow">PRIVATE HEALTH RECORDS</div>
+            <h1 id="authGateTitle">Your health records, organized securely.</h1>
+            <p class="sub">Sign in with Google, or use the AYUSH+ email account option when it is enabled for this
+                environment, to open your private workspace. Your records are linked to your account and encrypted on
+                the AYUSH+ server.</p>
+            <label class="sub auth-language-label" for="gateLanguage">Website language</label>
+            <select id="gateLanguage" class="field auth-language" data-language-select
+                onchange="setLanguage(this.value)">
+                <option value="en">English</option>
+                <option value="ta">தமிழ்</option>
+                <option value="te">తెలుగు</option>
+                <option value="kn">ಕನ್ನಡ</option>
+                <option value="ml">മലയാളം</option>
+                <option value="hi">हिन्दी</option>
+            </select>
+            <div id="googleSignIn" class="google-slot auth-google-slot"></div>
+            <p id="googleAuthStatus" class="auth-setup-note" role="status" aria-live="polite">Google sign-in is
+                optional. Create or sign in to an AYUSH+ account below.</p>
+            <div class="auth-divider"><span>OR USE AN AYUSH+ ACCOUNT</span></div>
+            <form id="emailAuthForm" class="auth-email-form">
+                <label id="authNameLabel" for="authName" hidden>Your name</label>
+                <input id="authName" class="field" type="text" autocomplete="name" maxlength="100"
+                    placeholder="Your name" hidden>
+                <label for="authEmail">Email address</label>
+                <input id="authEmail" class="field" type="email" autocomplete="email" maxlength="254"
+                    placeholder="you@example.com" required>
+                <label for="authPassword">Password</label>
+                <input id="authPassword" class="field" type="password" autocomplete="current-password" minlength="10"
+                    maxlength="128" placeholder="At least 10 characters" required>
+                <button id="emailAuthSubmit" type="submit" class="btn btn-primary">Sign in with email</button>
+                <button id="emailAuthMode" type="button" class="auth-mode-toggle">Create an account instead</button>
+                <p id="emailAuthStatus" class="auth-email-note" role="status">Use a unique password. Email verification
+                    and password recovery are not configured for this demo.</p>
+            </form>
+            <p class="sub auth-note">Use an account you control. Add records only when you have permission to store
+                them.</p>
+        </div>
+        <div class="auth-gate-decoration" aria-hidden="true">✦</div>
+    </section>
+    <div class="app">
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <img class="logo" src="assets/ayush-lavender-logo.png" alt="AYUSH+">
+            </div>
+            <div class="nav-label">WORKSPACE</div><a class="nav active" data-page="dashboard"><span
+                    class="ico">⌂</span>Dashboard</a><a class="nav" data-page="timeline"><span
+                    class="ico">◷</span>Health timeline</a><a class="nav" data-page="profile"><span
+                    class="ico">♡</span>Health profile</a><a class="nav" data-page="trends"><span
+                    class="ico">⌁</span>Trends & insights</a><a class="nav" data-page="chat"><span
+                    class="ico">✧</span>Ask your health data</a>
+            <div class="nav-label">YOUR CARE</div><a class="nav" data-page="medicines"><span
+                    class="ico">◉</span>Medicines & reminders</a><a class="nav" data-page="family"><span
+                    class="ico">♧</span>Family profiles</a><a class="nav" data-page="doctor"><span
+                    class="ico">▤</span>Doctor visit prep</a><a class="nav" data-page="settings"><span
+                    class="ico">⚙</span>Settings & privacy</a>
+            <div class="side-bottom">
+                <div class="privacy"><b>♧ Your health stays yours</b>Signed-in records are encrypted before they are
+                    stored on this server. AI sharing is always optional.</div>
+            </div>
+        </aside>
+        <main class="main">
+            <header class="topbar">
+                <div style="display:flex;align-items:center;gap:12px"><button class="iconbtn hamb"
+                        onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button><span
+                        class="crumb">My workspace&nbsp; / &nbsp;<b id="crumb">Dashboard</b></span></div>
+                <div class="right"><select class="pill" id="language" onchange="setLanguage(this.value)"
+                        aria-label="Website language">
+                        <option value="en">English</option>
+                        <option value="ta">தமிழ்</option>
+                        <option value="te">తెలుగు</option>
+                        <option value="kn">ಕನ್ನಡ</option>
+                        <option value="ml">മലയാളം</option>
+                        <option value="hi">हिन्दी</option>
+                    </select>
+                    <div id="authStatus" class="auth-status" hidden></div>
+                    <div class="avatar" id="topAvatar">J</div>
+                </div>
+            </header>
+            <div class="content">
+                <section class="page active" id="page-dashboard">
+                    <div class="welcome">
+                        <div>
+                            <div class="eyebrow">YOUR PRIVATE HEALTH RECORDS</div>
+                            <h1>Your health workspace</h1>
+                            <p class="sub">Your health story, thoughtfully organized.</p>
+                        </div><button class="btn btn-primary" onclick="go('upload')">＋ Upload a report</button>
+                    </div>
+                    <div id="personalDashboard" class="personal-dashboard" hidden></div>
+                </section>
+                <section class="page" id="page-upload">
+                    <div class="welcome">
+                        <div>
+                            <div class="eyebrow">YOUR RECORDS, ORGANIZED</div>
+                            <h1>Upload a health document</h1>
+                            <p class="sub">PDF/image OCR and plain-text extraction run locally. Common
+                                Office/OpenDocument files are parsed by this server after secure upload. AI analysis is
+                                a separate, optional action.</p>
+                        </div>
+                    </div>
+                    <div class="ai-consent card"
+                        style="margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap">
+                        <div><b>AI explanation and voice language</b>
+                            <p class="sub" style="margin:4px 0 0">Choose a language. AI is called only when you click an
+                                analysis button and confirm sharing.</p>
+                        </div>
+                        <select class="field" data-ai-language aria-label="AI response language">
+                            <option value="en">English</option>
+                            <option value="hi">हिन्दी</option>
+                            <option value="ta">தமிழ்</option>
+                            <option value="te">తెలుగు</option>
+                            <option value="kn">ಕನ್ನಡ</option>
+                            <option value="ml">മലയാളം</option>
+                        </select>
+                    </div>
+                    <div class="card">
+                        <label class="disclaimer"
+                            style="display:flex;gap:9px;align-items:flex-start;margin:0 0 14px;color:var(--ink)"><input
+                                id="secureFileConsent" type="checkbox"><span><b>Consent to save originals and
+                                    extracted records to your encrypted AYUSH+ account storage.</b> If this box is
+                                unchecked, dropping or choosing a file will ask you to confirm before upload. AI
+                                sharing is a separate choice each time.</span></label>
+                        <p class="sub" id="uploadStorageStatus" role="status" aria-live="polite" style="margin:0 0 14px">
+                            Checking encrypted account storage…</p>
+                        <p class="sub" id="uploadAiStatus" role="status" aria-live="polite" style="margin:0 0 14px">
+                            Checking AI provider setup…</p>
+                        <div class="upload-box" id="dropZone">
+                            <div class="big">☁</div>
+                            <h2 style="margin:10px 0 5px">Drop files here</h2>
+                            <p>PDF, JPG, PNG, DOCX, XLSX, PPTX, ODT, ODS, ODP, ODG, EPUB, TEX, TXT, CSV, JSON, Markdown,
+                                HTML, RTF or LOG · up to 20 MB each</p><button class="btn btn-primary" type="button"
+                                onclick="document.getElementById('fileInput').click()">Choose files</button><input
+                                id="fileInput" type="file"
+                                accept=".pdf,.jpg,.jpeg,.png,.docx,.xlsx,.pptx,.odt,.ods,.odp,.odg,.epub,.tex,.txt,.csv,.json,.md,.html,.htm,.rtf,.log"
+                                multiple>
+                        </div>
+                        <div class="upload-list" id="uploadList">
+                            <div class="upload-item" id="uploadHint">Sign in, then choose or drop a supported file (up
+                                to 20 MB). If storage consent is unchecked, AYUSH+ will ask before uploading. AI
+                                sharing requires a separate confirmation.</div>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top:15px">
+                        <h2>OCR and privacy</h2>
+                        <p class="sub">Text recognition uses Tesseract.js in your browser. PDF pages are rendered
+                            locally with PDF.js. Office documents are parsed on the encrypted account server. Printed
+                            English, Hindi, Tamil, Telugu, Kannada and Malayalam are
+                            available; handwriting recognition is best effort for English/Hindi. Verify every extracted
+                            value against the original. After account sign-in and your consent, account records are
+                            stored encrypted on the server. AI analysis sends extracted text to the configured provider
+                            only when you explicitly ask for it.</p>
+                        <p class="disclaimer">OCR may misread names, dates, units, decimal points, and handwriting. This
+                            tool does not diagnose or interpret results. Consult a qualified health professional.</p>
+                    </div>
+                </section>
+                <section class="page" id="page-timeline">
+                    <div class="welcome">
+                        <div>
+                            <div class="eyebrow">YOUR HEALTH STORY</div>
+                            <h1>Health timeline</h1>
+                            <p class="sub">Your reports and events, in chronological order.</p>
+                        </div><button class="btn btn-primary" onclick="go('upload')">＋ Add record</button>
+                    </div>
+                    <div class="card">
+                        <div class="filters"><input id="searchTimeline" placeholder="⌕  Search records"
+                                oninput="filterTimeline()"><select id="typeFilter" onchange="filterTimeline()">
+                                <option value="">All document types</option>
+                                <option>Lab report</option>
+                                <option>Prescription</option>
+                                <option>Imaging</option>
+                            </select><select id="periodFilter">
+                                <option value="year">Past year</option>
+                                <option value="six">Past 6 months</option>
+                                <option value="all">All time</option>
+                            </select></div>
+                        <div id="timelineList"></div>
+                    </div>
+                </section>
+                <section class="page" id="page-profile">
+                    <div class="welcome">
+                        <div>
+                            <div class="eyebrow">YOUR HEALTH PROFILE</div>
+                            <h1>Health profile</h1>
+                            <p class="sub">A unified view of your health information.</p>
+                        </div><button class="btn btn-soft" id="editProfile">Edit profile</button>
+                    </div>
+                    <div class="grid layout">
+                        <div>
+                            <div class="card">
+                                <h2>Personal information</h2>
+                                <div class="profile-mini">
+                                    <div class="profile-photo">👤</div>
+                                    <div><b>Your name</b>
+                                        <div class="sub">Email not added</div>
+                                    </div>
+                                </div>
+                                <div class="kv"><span>Date of birth</span><b>Not provided</b></div>
+                                <div class="kv"><span>Blood group</span><b>Not recorded</b></div>
+                                <div class="kv"><span>ABHA ID</span><b id="abhaProfileValue">Not linked <button
+                                            class="text-btn" onclick="openModal('abhaModal')">Link</button></b>
+                                </div>
+                            </div>
+                            <div class="card" style="margin-top:15px">
+                                <h2>Key diagnoses & conditions</h2>
+                                <div class="condition-list"></div><button class="btn btn-soft" style="margin-top:12px"
+                                    onclick="addCondition()">＋
+                                    Add condition</button>
+                            </div>
+                            <div class="card" style="margin-top:15px">
+                                <h2>Allergies</h2>
+                                <p class="sub" id="sampleAllergies">No known allergies recorded. Please confirm with
+                                    your care team.</p>
+                                <div id="profileAllergies"></div>
+                                <button class="btn btn-soft" type="button" onclick="addAllergy()">＋ Add allergy</button>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="card">
+                                <h2>Current medicines</h2>
+
+                                <div id="profileMedicines"></div>
+                            </div>
+                            <div class="card" style="margin-top:15px">
+                                <h2>Latest lab values</h2>
+
+
+                                <div id="profileLabs"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="page" id="page-trends">
+                    <div class="welcome">
+                        <div>
+                            <div class="eyebrow">PATTERNS OVER TIME</div>
+                            <h1>Trends & insights</h1>
+                            <p class="sub">Track recurring measurements across your reports.</p>
+                        </div><select class="pill" id="trendPeriod">
+                            <option value="year">Past 12 months</option>
+                            <option value="six">Past 6 months</option>
+                            <option value="all">All time</option>
+                        </select>
+                    </div>
+                    <div id="personalTrends" class="grid"
+                        style="grid-template-columns:repeat(2,1fr);margin-bottom:16px"></div>
+
+                </section>
+                <section class="page" id="page-chat">
+                    <div class="welcome">
+                        <div>
+                            <div class="eyebrow">PRIVATE HEALTH ASSISTANT</div>
+                            <h1>Ask your health data</h1>
+                            <p class="sub">Search records locally, or explicitly ask AI to explain them.</p>
+                        </div>
+                    </div>
+                    <label class="sub" for="chatAiLanguage" style="display:block;margin:0 0 9px">AI answer and voice
+                        language <select id="chatAiLanguage" class="field" data-ai-language>
+                            <option value="en">English</option>
+                            <option value="hi">हिन्दी</option>
+                            <option value="ta">தமிழ்</option>
+                            <option value="te">తెలుగు</option>
+                            <option value="kn">ಕನ್ನಡ</option>
+                            <option value="ml">മലയാളം</option>
+                        </select></label>
+                    <div class="card chatbox">
+                        <div class="messages" id="messages">
+                            <div class="bubble">Hi. Ask about results and report names in the currently selected family
+                                profile. Answers search records saved for that profile only; OCR may misread values and
+                                this assistant does not provide medical advice.<br><button class="text-btn"
+                                    type="button" onclick="speakText(this.parentElement.innerText)">🔊 Speak
+                                    reply</button></div>
+                        </div>
+                        <div class="chat-entry"><input id="chatInput" placeholder="Ask a question about your records…"
+                                onkeydown="if(event.key==='Enter')sendChat()"><button class="iconbtn" title="Speak"
+                                onclick="speakQuestion()">🎙</button><button class="btn btn-primary"
+                                onclick="sendChat()">Ask</button></div><button class="text-btn" type="button"
+                            onclick="speakHealthSummary()">🔊 Read my health summary aloud</button>
+                        <button class="btn btn-soft" type="button" onclick="askAiAboutRecords()">✧ Ask AI about my
+                            records</button>
+                        <small class="disclaimer">For this question, AI receives text from up to the eight most recent
+                            records in the selected profile. Other records are not included.</small>
+                        <div class="disclaimer">This assistant can make mistakes and does not provide diagnosis or
+                            treatment. Contact a clinician for medical advice.</div>
+                    </div>
+                </section>
+                <section class="page" id="page-medicines">
+                    <div class="welcome">
+                        <div>
+                            <div class="eyebrow">STAY ON TRACK</div>
+                            <h1>Medicines & reminders</h1>
+                            <p class="sub">Keep a simple schedule for medicines you choose to track.</p>
+                        </div><button class="btn btn-primary" onclick="openModal('reminderModal')">＋ Add
+                            reminder</button>
+                    </div>
+                    <div class="grid layout">
+                        <div class="card">
+                            <h2>My reminders</h2><button class="btn btn-soft" id="enableNotifications"
+                                type="button">Enable browser reminders</button>
+                            <div id="reminderList"></div>
+                            <p class="disclaimer">Browser reminders require notification permission and may not run when
+                                this page is closed. This prototype does not send email.</p>
+                        </div>
+                        <div class="card">
+                            <h2>Interaction checker</h2>
+                            <p class="sub">Add your medicines to see common interaction information.</p><input
+                                class="field" id="interactionMed1" style="width:100%;margin-bottom:10px"
+                                placeholder="Medicine name" aria-label="First medicine"><input class="field"
+                                id="interactionMed2" style="width:100%" placeholder="Another medicine"
+                                aria-label="Second medicine">
+                            <div class="alert" id="interactionResult" hidden
+                                style="border-color:#a8cdbd;background:#f3faf6"></div><button class="btn btn-soft"
+                                id="interactionCheck">Check medicines</button>
+                            <p class="disclaimer">This small offline check is not comprehensive medical advice. Ask a
+                                pharmacist about your full medicine list.</p>
+                        </div>
+                    </div>
+                </section>
+                <section class="page" id="page-family">
+                    <div class="welcome">
+                        <div>
+                            <div class="eyebrow">CARE FOR YOUR CIRCLE</div>
+                            <h1>Family profiles</h1>
+                            <p class="sub">Switch between separate health records for people you care for.</p>
+                        </div><button class="btn btn-primary" onclick="openModal('familyModal')">＋ Add profile</button>
+                    </div>
+                    <div class="card">
+                        <h2>Profiles on this account</h2>
+                        <div class="family" id="familyList"></div>
+                        <p class="disclaimer">Family data is scoped to the signed-in account and profile name. The
+                            account holder can access all family profiles.</p>
+                    </div>
+                </section>
+                <section class="page" id="page-doctor">
+                    <div class="welcome">
+                        <div>
+                            <div class="eyebrow">MAKE THE MOST OF YOUR VISIT</div>
+                            <h1>Doctor visit preparation</h1>
+                            <p class="sub">Bring a clear summary of topics from your recent reports.</p>
+                        </div><button class="btn btn-primary" id="printDoctor">⎙ Print this page</button>
+                    </div>
+                    <div class="card" id="doctorReport">
+                        <h2>Questions you may want to discuss</h2>
+                        <label class="sub" for="doctorPeriod">Report period</label>
+                        <select class="pill" id="doctorPeriod" aria-label="Doctor report period">
+                            <option value="3">Past 3 months</option>
+                            <option value="6">Past 6 months</option>
+                            <option value="12">Past 12 months</option>
+                            <option value="all">All uploaded reports</option>
+                        </select>
+                        <div id="doctorDynamic"></div>
+
+                    </div>
+                    <div class="card" id="doctorExport" style="margin-top:15px">
+                        <h2>Quick report export</h2>
+                        <p class="sub">Download your health information in FHIR-inspired JSON format.</p><button
+                            class="btn btn-soft" onclick="exportFHIR()">↓ Download FHIR JSON</button> <button
+                            class="btn btn-soft" onclick="printDoctorReport()">Print / Save as PDF</button>
+                    </div>
+                </section>
+                <section class="page" id="page-settings">
+                    <div class="welcome">
+                        <div>
+                            <div class="eyebrow">YOUR PREFERENCES</div>
+                            <h1>Settings & privacy</h1>
+                            <p class="sub">Manage your account and data preferences.</p>
+                        </div>
+                    </div>
+                    <div class="grid layout">
+                        <div class="card">
+                            <h2>Account</h2>
+                            <div class="profile-mini">
+                                <div class="profile-photo">👤</div>
+                                <div><b id="settingsAccountName">Local demo</b>
+                                    <div class="sub" id="settingsAccountStatus">Account not connected</div>
+                                </div>
+                            </div><button class="btn btn-soft" id="settingsGoogleButton"
+                                onclick="startGoogleSignIn()">Continue with Google</button>
+                            <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+                            <h2>Website language</h2><select class="field" data-language-select>
+                                <option value="en">English</option>
+                                <option value="ta">தமிழ்</option>
+                                <option value="te">తెలుగు</option>
+                                <option value="kn">ಕನ್ನಡ</option>
+                                <option value="ml">മലയാളം</option>
+                                <option value="hi">हिन्दी</option>
+                            </select>
+                            <p class="sub translation-status" id="translationStatus" role="status"></p>
+                            <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+                            <h2>Text size</h2><label class="sub" for="textSize">Adjust reading size</label>
+                            <div class="text-size-control"><span>A</span><input id="textSize" type="range" min="90"
+                                    max="150" step="5" value="120" aria-label="Adjust website text size"><span
+                                    class="text-size-large">A</span><output id="textSizeValue">120%</output></div>
+                            <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+                            <h2>AI response language</h2>
+                            <p class="sub">Choose the language for written AI summaries and spoken playback.</p>
+                            <select class="field" data-ai-language aria-label="AI response and voice language">
+                                <option value="en">English</option>
+                                <option value="hi">हिन्दी</option>
+                                <option value="ta">தமிழ்</option>
+                                <option value="te">తెలుగు</option>
+                                <option value="kn">ಕನ್ನಡ</option>
+                                <option value="ml">മലയാളം</option>
+                            </select>
+                            <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+                            <h2>AI provider setup</h2>
+                            <p class="sub" id="aiProviderStatus" role="status">Checking server configuration…</p>
+                            <a class="btn btn-soft" href="https://platform.openai.com/api-keys" target="_blank"
+                                rel="noopener noreferrer">Open provider key dashboard ↗</a>
+                            <p class="sub" style="font-size:11px;margin-top:10px">Create a key with your provider, then
+                                add it as <code>OPENAI_API_KEY</code> in the server’s private <code>.env</code> file and
+                                restart AYUSH+. The key is never entered here or exposed to the browser.</p>
+                        </div>
+                        <div class="card">
+                            <h2>Privacy & data</h2>
+                            <p class="sub">After sign-in, health records and original files are linked to your account
+                                and encrypted in the AYUSH+ server database. AI uses record text only for an analysis
+                                you request and confirm; it does not train or update its model from your records.
+                                Provider retention rules still apply.</p><button class="btn btn-soft"
+                                onclick="exportFHIR()">Download my data (JSON)</button><button class="btn"
+                                style="color:var(--red);margin-left:6px" onclick="clearDemo()">Delete my account data
+                            </button>
+                            <div class="alert" style="margin-top:17px"><b>Medical information notice</b>AYUSH+ is
+                                an organizational tool. AI-generated summaries are informational and are not diagnosis,
+                                treatment, or a substitute for professional care.</div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    <div class="modal-wrap" id="reminderModal">
+        <div class="modal">
+            <h2>Add medicine reminder</h2><label>Medicine name<input class="field" id="medName"
+                    placeholder="e.g. Vitamin D3"></label><label>Reminder time<input class="field" id="medTime"
+                    type="time" required></label>
+            <div class="modal-actions"><button class="btn" onclick="closeModal('reminderModal')">Cancel</button><button
+                    class="btn btn-primary" onclick="addReminder()">Save reminder</button></div>
+        </div>
+    </div>
+    <div class="modal-wrap" id="familyModal">
+        <div class="modal">
+            <h2>Add family profile</h2><label>Name<input class="field" id="familyName"
+                    placeholder="Family member's name"></label><label>Relationship<input class="field"
+                    id="familyRelation" placeholder="e.g. Mother"></label>
+            <div class="modal-actions"><button class="btn" onclick="closeModal('familyModal')">Cancel</button><button
+                    class="btn btn-primary" onclick="addFamily()">Create profile</button></div>
+        </div>
+    </div>
+    <div class="modal-wrap" id="abhaModal">
+        <div class="modal">
+            <h2>ABDM / ABHA integration readiness</h2>
+            <p class="sub">This app does not collect Aadhaar or OTPs. ABHA login must be connected through an approved
+                ABDM integration and a secure server.</p>
+            <label class="sub" for="abhaDemoId">Mock ABHA reference (local demo only)</label>
+            <input class="field" id="abhaDemoId" maxlength="32" placeholder="DEMO-1234-ABCD" autocomplete="off">
+            <p class="disclaimer">Enter a fake DEMO- reference only. Do not enter a real ABHA number, Aadhaar number, or
+                OTP.</p>
+            <button class="btn btn-soft" type="button" onclick="saveDemoAbha()">Save mock link</button>
+            <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+            <label class="sub" for="abhaImportFile">Import a FHIR JSON bundle (local demo only)</label>
+            <input class="field" id="abhaImportFile" type="file" accept="application/json,.json">
+            <button class="btn btn-soft" type="button" onclick="importFhirBundle()">Import into this profile</button>
+            <p class="disclaimer">The selected file is parsed in this browser and added to the active profile. Imported
+                values are unverified. This is not an ABDM connection.</p>
+            <p>1. Apply for sandbox access through the official ABDM portal.</p>
+            <p>2. Complete the required onboarding and API validation.</p>
+            <p>3. Configure credentials and the approved callback on the server.</p>
+            <a href="https://sandbox.abdm.gov.in/" target="_blank" rel="noopener noreferrer">Open ABDM Sandbox</a>
+            <div class="modal-actions"><button class="btn btn-primary" onclick="closeModal('abhaModal')">Close</button>
+            </div>
+        </div>
+    </div>
+    <div class="toast" id="toast"></div>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="/config.js"></script>
+    <script src="scripts/i18n.js"></script>
+    <script src="scripts/accessibility.js"></script>
+    <script src="scripts/app.js"></script>
+    <script src="scripts/clean-dashboard.js"></script>
+</body>
+
+</html>

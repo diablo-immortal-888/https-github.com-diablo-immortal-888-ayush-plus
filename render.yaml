@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: ayushplus-health-demo
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: TRUST_PROXY
+        value: "true"
+      - key: PUBLIC_ORIGIN
+        value: https://ayushplus-health-demo.onrender.com
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: DATA_ENCRYPTION_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        value: gpt-5-mini

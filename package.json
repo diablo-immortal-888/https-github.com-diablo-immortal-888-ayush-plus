@@ -1,0 +1,20 @@
+{
+  "name": "ayush-plus",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "AYUSH+ health records and insights",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.js",
+    "start:container": "node server.js",
+    "check": "node --check server.js && node --check scripts/app.js && node --check scripts/i18n.js && node --check scripts/accessibility.js && node --check scripts/clean-dashboard.js && node --check scripts/backup.js && node --check scripts/deploy-preflight.js",
+    "preflight:production": "node --env-file-if-exists=.env.production scripts/deploy-preflight.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^13.0.3",
+    "officeparser": "^8.1.1"
+  }
+}
